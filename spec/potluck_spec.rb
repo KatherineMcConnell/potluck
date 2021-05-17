@@ -1,76 +1,58 @@
-require 'minitest/autorun'
-require 'minitest/pride'
-require './lib/dish'
-require './lib/potluck'
+require 'rspec'
+require_relative '../lib/dish'
+require_relative '../lib/potluck'
 
-class PotluckTest < Minitest::Test
-
-  def test_it_exists_and_has_attributes
+RSpec.describe Potluck do
+#Iteration #2
+  it 'exists' do
     potluck = Potluck.new("7-13-18")
 
-    assert_instance_of Potluck, potluck
-    assert_equal "7-13-18", potluck.date
-    assert_equal [], potluck.dishes
+    expect(potluck).to be_an_instance_of(Potluck)
   end
 
-  def test_it_has_add_dish
+  it 'has attributes' do
+    potluck = Potluck.new("7-13-18")
+
+    expect(potluck.date).to eq("7-13-18")
+  end
+
+  it 'starts with no dishes' do
+    potluck = Potluck.new("7-13-18")
+
+    expect(potluck.dishes).to eq([])
+  end
+
+  it 'can add dishes' do
     potluck = Potluck.new("7-13-18")
     couscous_salad = Dish.new("Couscous Salad", :appetizer)
     cocktail_meatballs = Dish.new("Cocktail Meatballs", :entre)
-
     potluck.add_dish(couscous_salad)
     potluck.add_dish(cocktail_meatballs)
 
-    assert_equal [couscous_salad, cocktail_meatballs], potluck.dishes
+    expect(potluck.dishes).to eq([couscous_salad, cocktail_meatballs])
   end
-
-  def test_get_all_from_category
-    potluck = Potluck.new("7-13-18")
-    couscous_salad = Dish.new("Couscous Salad", :appetizer)
-    summer_pizza = Dish.new("Summer Pizza", :appetizer)
-    roast_pork = Dish.new("Roast Pork", :entre)
-    cocktail_meatballs = Dish.new("Cocktail Meatballs", :entre)
-    candy_salad = Dish.new("Candy Salad", :dessert)
-
-    potluck.add_dish(couscous_salad)
-    potluck.add_dish(summer_pizza)
-    potluck.add_dish(roast_pork)
-    potluck.add_dish(cocktail_meatballs)
-    potluck.add_dish(candy_salad)
-
-    assert_equal [couscous_salad, summer_pizza], potluck.get_all_from_category(:appetizer)
-    assert_equal couscous_salad, potluck.get_all_from_category(:appetizer).first
-    assert_equal "Couscous Salad" , potluck.get_all_from_category(:appetizer).first.name
-  end
-
-  def test_it_has_menu
-    # skip
+#Iteration #3
+  it 'can get all dishes from a category' do
     potluck = Potluck.new("7-13-18")
     couscous_salad = Dish.new("Couscous Salad", :appetizer)
     summer_pizza = Dish.new("Summer Pizza", :appetizer)
     roast_pork = Dish.new("Roast Pork", :entre)
     cocktail_meatballs = Dish.new("Cocktail Meatballs", :entre)
     candy_salad = Dish.new("Candy Salad", :dessert)
-    bean_dip = Dish.new("Bean Dip", :appetizer)
-
     potluck.add_dish(couscous_salad)
     potluck.add_dish(summer_pizza)
     potluck.add_dish(roast_pork)
     potluck.add_dish(cocktail_meatballs)
     potluck.add_dish(candy_salad)
-    potluck.add_dish(bean_dip)
 
-    expected = {
-                :appetizers=>["Bean Dip", "Couscous Salad", "Summer Pizza"],
-                :desserts=>["Candy Salad"],
-                :entres=>["Cocktail Meatballs", "Roast Pork"]
-              }
+    expect(potluck.get_all_from_category(:appetizer)).to eq([couscous_salad, summer_pizza])
 
-    assert_equal expected, potluck.menu
+    expect(potluck.get_all_from_category(:appetizer).first).to eq(couscous_salad)
 
+    expect(potluck.get_all_from_category(:appetizer).first.name).to eq("Couscous Salad")
   end
-
-  def test_it_has_ratio
+#Iteration 4
+  it 'menu' do
     potluck = Potluck.new("7-13-18")
     couscous_salad = Dish.new("Couscous Salad", :appetizer)
     summer_pizza = Dish.new("Summer Pizza", :appetizer)
@@ -78,7 +60,6 @@ class PotluckTest < Minitest::Test
     cocktail_meatballs = Dish.new("Cocktail Meatballs", :entre)
     candy_salad = Dish.new("Candy Salad", :dessert)
     bean_dip = Dish.new("Bean Dip", :appetizer)
-
     potluck.add_dish(couscous_salad)
     potluck.add_dish(summer_pizza)
     potluck.add_dish(roast_pork)
@@ -86,8 +67,27 @@ class PotluckTest < Minitest::Test
     potluck.add_dish(candy_salad)
     potluck.add_dish(bean_dip)
 
-    assert_equal 50.0, potluck.ratio(:appetizer)
+    expected = {:appetizers=>["Bean Dip", "Couscous Salad", "Summer Pizza"],
+                :entres=>["Cocktail Meatballs", "Roast Pork"],
+                :desserts=>["Candy Salad"]}
+    expect(potluck.menu).to eq(expected)
   end
 
+  it 'can calulate a ratio' do
+    potluck = Potluck.new("7-13-18")
+    couscous_salad = Dish.new("Couscous Salad", :appetizer)
+    summer_pizza = Dish.new("Summer Pizza", :appetizer)
+    roast_pork = Dish.new("Roast Pork", :entre)
+    cocktail_meatballs = Dish.new("Cocktail Meatballs", :entre)
+    candy_salad = Dish.new("Candy Salad", :dessert)
+    bean_dip = Dish.new("Bean Dip", :appetizer)
+    potluck.add_dish(couscous_salad)
+    potluck.add_dish(summer_pizza)
+    potluck.add_dish(roast_pork)
+    potluck.add_dish(cocktail_meatballs)
+    potluck.add_dish(candy_salad)
+    potluck.add_dish(bean_dip)
 
+    expect(potluck.ratio(:appetizer)).to eq(50.0)
+  end
 end

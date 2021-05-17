@@ -12,32 +12,22 @@ class Potluck
   end
 
   def get_all_from_category(category)
-    menu_section = []
-    @dishes.each do |dish|
-      if dish.category == category
-        menu_section << dish
-      end
-    end
-    menu_section
+    @dishes.select { |dish| dish.category == category}
   end
 
   def menu
-    sorted_dishes = @dishes.sort_by do |dish|
-      dish.name
+    menu_h = Hash.new{|hash,key| hash[key] = []}
+    @dishes.each do |dish|
+      plural = dish.category.to_s + "s"
+      menu_h[plural.to_sym] << dish.name
+      menu_h[plural.to_sym].sort! #permanent tranformation w/a bang
     end
-    menu_categories = {}
-    sorted_dishes.each do |dish|
-      if menu_categories["#{dish.category}s".to_sym] == nil
-        menu_categories["#{dish.category}s".to_sym] = [dish.name]
-      else
-        menu_categories["#{dish.category}s".to_sym] << dish.name
-      end
-    end
-    menu_categories
+    menu_h
   end
+  #aggregator or accumulator for our iteration. Each is where to start w/ enum b/c you have accumulator
+  #get the names of dishes alphabetized into array
 
   def ratio(category)
-    (get_all_from_category(category).count / @dishes.count.to_f) * 100.0
+    get_all_from_category(category).size.to_f/@dishes.size * 100
   end
-
 end
